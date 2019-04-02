@@ -1,0 +1,76 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nest5Test", "Nest5Test\Nest5Test.csproj", "{C166D421-8642-4C9C-AF26-136D578EBFBC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTest5.x", "UnitTest\UnitTest5.x.csproj", "{AE22DA20-AD28-42B8-AAEB-6737AA05B16B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nest2Test", "Nest2Test\Nest2Test.csproj", "{A63C97F2-0FAF-4EBB-8CFF-6727AEF5539C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NestHelper", "NestHelper\NestHelper.csproj", "{1BFBAC3A-DF6E-40BD-8EDB-2116BBB8C562}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTest2.x", "UnitTest2.x\UnitTest2.x.csproj", "{625725EB-82F7-428D-8654-A2767FBBB636}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTest5.x_do_2.3.4", "UnitTest5.x_do_2.3.4\UnitTest5.x_do_2.3.4.csproj", "{9869243E-C2D0-4AB9-8F50-46B0D601DF58}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C166D421-8642-4C9C-AF26-136D578EBFBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C166D421-8642-4C9C-AF26-136D578EBFBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C166D421-8642-4C9C-AF26-136D578EBFBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C166D421-8642-4C9C-AF26-136D578EBFBC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE22DA20-AD28-42B8-AAEB-6737AA05B16B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE22DA20-AD28-42B8-AAEB-6737AA05B16B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE22DA20-AD28-42B8-AAEB-6737AA05B16B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE22DA20-AD28-42B8-AAEB-6737AA05B16B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A63C97F2-0FAF-4EBB-8CFF-6727AEF5539C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A63C97F2-0FAF-4EBB-8CFF-6727AEF5539C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A63C97F2-0FAF-4EBB-8CFF-6727AEF5539C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A63C97F2-0FAF-4EBB-8CFF-6727AEF5539C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1BFBAC3A-DF6E-40BD-8EDB-2116BBB8C562}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1BFBAC3A-DF6E-40BD-8EDB-2116BBB8C562}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1BFBAC3A-DF6E-40BD-8EDB-2116BBB8C562}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1BFBAC3A-DF6E-40BD-8EDB-2116BBB8C562}.Release|Any CPU.Build.0 = Release|Any CPU
+		{625725EB-82F7-428D-8654-A2767FBBB636}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{625725EB-82F7-428D-8654-A2767FBBB636}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{625725EB-82F7-428D-8654-A2767FBBB636}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{625725EB-82F7-428D-8654-A2767FBBB636}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9869243E-C2D0-4AB9-8F50-46B0D601DF58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9869243E-C2D0-4AB9-8F50-46B0D601DF58}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9869243E-C2D0-4AB9-8F50-46B0D601DF58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9869243E-C2D0-4AB9-8F50-46B0D601DF58}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 7
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = http://eptfs.tech.bitauto.com:8080/tfs/bitauto
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = Nest2Test\\Nest2Test.csproj
+		SccProjectName1 = Nest2Test
+		SccLocalPath1 = Nest2Test
+		SccProjectUniqueName2 = Nest5Test\\Nest5Test.csproj
+		SccProjectName2 = Nest5Test
+		SccLocalPath2 = Nest5Test
+		SccProjectUniqueName3 = NestHelper\\NestHelper.csproj
+		SccProjectName3 = NestHelper
+		SccLocalPath3 = NestHelper
+		SccProjectUniqueName4 = UnitTest2.x\\UnitTest2.x.csproj
+		SccProjectName4 = UnitTest2.x
+		SccLocalPath4 = UnitTest2.x
+		SccProjectUniqueName5 = UnitTest\\UnitTest5.x.csproj
+		SccProjectName5 = UnitTest
+		SccLocalPath5 = UnitTest
+		SccProjectUniqueName6 = UnitTest5.x_do_2.3.4\\UnitTest5.x_do_2.3.4.csproj
+		SccProjectName6 = UnitTest5.x_do_2.3.4
+		SccLocalPath6 = UnitTest5.x_do_2.3.4
+	EndGlobalSection
+EndGlobal
