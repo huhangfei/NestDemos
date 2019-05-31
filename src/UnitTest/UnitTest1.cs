@@ -333,7 +333,7 @@ namespace UnitTest
                                     )
                                )
                            )
-                           .FielddataFields(fdf=>fdf.Fields(fd=>fd.Dic,fd=>fd.Name))//查看实际内容
+                           .FielddataFields(fdf=>fdf.Fields(fd=>fd.Dic,fd=>fd.Name))//查看实际内容 结果在 result.Fields 中
                            .Size(10)
                    );
 
@@ -353,7 +353,7 @@ namespace UnitTest
                                     )
                                )
                            )
-                           .FielddataFields(fdf => fdf.Fields(fd => fd.Dic, fd => fd.Name))//查看实际内容
+                           .FielddataFields(fdf => fdf.Fields(fd => fd.Dic, fd => fd.Name))//查看实际内容 结果在 result.Fields 中
                            .Size(10)
                    );
 
@@ -386,11 +386,11 @@ namespace UnitTest
                            .Query(q => q
                                .Bool(b => b
                                    .Must(m => m
-                                       .Wildcard(qs=>qs.Field(fd=>fd.DicKeyword).Value("*油菜花*"))//Wildcard 要用keyword类型
+                                       .Wildcard(qs=>qs.Field(fd=>fd.DicKeyword).Value("*油菜花*"))//Wildcard 要用keyword类型 
                                     )
                                )
                            )
-                           .FielddataFields(fdf => fdf.Fields(fd => fd.DicKeyword, fd => fd.Name))//查看实际内容
+                           .FielddataFields(fdf => fdf.Fields(fd => fd.DicKeyword, fd => fd.Name))//查看实际内容 结果在 result.Fields 中
                            .Size(10)
                    );
 
@@ -406,7 +406,7 @@ namespace UnitTest
                                    )
                               )
                           )
-                          .FielddataFields(fdf => fdf.Fields(fd => fd.DicKeyword, fd => fd.Name))//查看实际内容
+                          .FielddataFields(fdf => fdf.Fields(fd => fd.DicKeyword, fd => fd.Name))//查看实际内容 结果在 result.Fields 中
                           .Size(10)
                   );
 
