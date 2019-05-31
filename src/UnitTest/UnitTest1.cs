@@ -362,10 +362,10 @@ namespace UnitTest
 
 
         /// <summary>
-        /// QueryString 模糊匹配
+        /// Wildcard 通配符匹配
         /// </summary>
         [TestMethod]
-        public void Test5QueryString()
+        public void Test5Wildcard()
         {
             Test5DeleteIndex();
 
