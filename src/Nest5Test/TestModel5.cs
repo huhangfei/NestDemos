@@ -21,8 +21,12 @@ namespace Nest5Test
         /// <summary>
         /// text 分词,Analyzer = "ik_max_word"
         /// </summary>
-        [Text(Name = "Dic", Index = true)]
+        [Text(Name = "Dic", Index = true,Fielddata =true)]
         public string Dic { get; set; }
+
+        [Keyword(Name = "DicKeyWord", Index = true)]
+        public string DicKeyword { get { return Dic; }}
+
 
         [Number(NumberType.Integer, Name = "State")]
         public int State { get; set; }

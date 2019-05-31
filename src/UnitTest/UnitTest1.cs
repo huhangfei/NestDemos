@@ -4,6 +4,7 @@ using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Nest5Test;
 using NestHelper;
+using Nest;
 
 namespace UnitTest
 {
@@ -20,6 +21,7 @@ namespace UnitTest
         public void Init()
         {
             _testNest=new TestNest();
+            Test5CreateIndex();
         }
 
         /// <summary>
@@ -36,7 +38,7 @@ namespace UnitTest
         /// 
         /// </summary>
         [TestMethod]
-        public void Test5IndexAction()
+        public void Test5CreateIndex()
         {
             if (_testNest.IndexExists(IndexName))
                 _testNest.DeleteIndex(IndexName);
@@ -72,7 +74,7 @@ namespace UnitTest
         {
             _testNest.Index(new TestModel5()
             {
-                Id = 1,
+                Id = 0,
                 Name = "测试数据1",
                 AddTime = DateTime.Now,
                 CreateTime = DateTime.Now,
@@ -83,6 +85,47 @@ namespace UnitTest
                 PassingRate = float.MaxValue,
                 State = 1
             },IndexName );
+
+
+            #region test data
+            int index = 1;
+            _testNest.Index(new TestModel5()
+            {
+                Id = index++,
+                Deleted = false,
+                Name = "油菜花",
+                Dic = "一种植物，叫油菜花。",
+                AddTime = DateTime.Now
+            }, IndexName);
+
+            _testNest.Index(new TestModel5()
+            {
+                Id = index++,
+                Deleted = false,
+                Name = "菜花",
+                Dic = "一种蔬菜，叫菜花。",
+                AddTime = DateTime.Now
+            }, IndexName);
+
+            _testNest.Index(new TestModel5()
+            {
+                Id = index++,
+                Deleted = false,
+                Name = "黄瓜",
+                Dic = "一种蔬菜，叫油黄瓜。",
+                AddTime = DateTime.Now
+            }, IndexName);
+
+            _testNest.Index(new TestModel5()
+            {
+                Id = index++,
+                Deleted = false,
+                Name = "苹果",
+                Dic = "一种水果，叫苹果。",
+                AddTime = DateTime.Now
+            }, IndexName);
+
+            #endregion
         }
 
         /// <summary>
@@ -116,6 +159,14 @@ namespace UnitTest
         [TestMethod]
         public void Test5Get()
         {
+            Test5DeleteIndex();
+
+            Test5CreateIndex();
+
+            Test5Index();
+
+            Thread.Sleep(1000);
+
             var data= _testNest.Get(IndexName, 1);
             Assert.IsNotNull(data);
             Assert.IsTrue(data.Id==1);
@@ -134,6 +185,14 @@ namespace UnitTest
         [TestMethod]
         public void Test5Update()
         {
+            Test5DeleteIndex();
+
+            Test5CreateIndex();
+
+            Test5Index();
+
+            Thread.Sleep(1000);
+
             _testNest.Update(IndexName, 1,new TestModel5() {Name = "ceshi"});
             var data = _testNest.Get(IndexName, 1);
             Assert.IsNotNull(data);
@@ -145,8 +204,16 @@ namespace UnitTest
         [TestMethod]
         public void Test5UpdateByWhere()
         {
-            Thread.Sleep(2000);
+            Test5DeleteIndex();
+
+            Test5CreateIndex();
+
+            Test5Index();
+
+            Thread.Sleep(1000);
+
             _testNest.UpdateByWhere(IndexName);
+
             var data = _testNest.Get(IndexName, 2);
             Assert.IsNotNull(data);
             Assert.IsTrue("新的名字"==data.Name);
@@ -231,14 +298,140 @@ namespace UnitTest
         {
             _testNest.Delete(IndexName,1);
         }
+        
         /// <summary>
+        /// match 关键词匹配
+        /// 使用了默认分词 
+        /// </summary>
+        [TestMethod]
+        public void Test5MatchQuery()
+        {
+            Test5DeleteIndex();
+
+            Test5CreateIndex();
+
+            Test5Index();
+
+            var _client = _testNest.CreateElasticClient(_nodes);
+            //立马刷新数据 否则有默认1s延迟，无法查询出来
+            _client.Refresh(IndexName);
+
+            var countResult = _client.Count<TestModel5>(s => s.Index(IndexName));
+
+            Console.WriteLine(countResult.Count);
+
+
+            var result = _client.Search<TestModel5>(s => s
+                    .Index(IndexName)
+                           .Query(q => q
+                               .Bool(b => b
+                                   .Must(m => m
+                                   .Match(mt => mt
+                                       .Field(fd => fd.Dic)
+                                       .Query("油菜花")
+                                        )
+                                    )
+                               )
+                           )
+                           .FielddataFields(fdf=>fdf.Fields(fd=>fd.Dic,fd=>fd.Name))//查看实际内容
+                           .Size(10)
+                   );
+
+            Assert.AreEqual(3,result.Hits.Count);
+
+
+
+            var result1 = _client.Search<TestModel5>(s => s
+                    .Index(IndexName)
+                           .Query(q => q
+                               .Bool(b => b
+                                   .Must(m => m
+                                   .Match(mt => mt
+                                       .Field(fd => fd.Dic)
+                                       .Query("苹果")
+                                        )
+                                    )
+                               )
+                           )
+                           .FielddataFields(fdf => fdf.Fields(fd => fd.Dic, fd => fd.Name))//查看实际内容
+                           .Size(10)
+                   );
+
+            Assert.AreEqual(1,result1.Hits.Count);
+        }
+
+
+        /// <summary>
+        /// QueryString 模糊匹配
+        /// </summary>
+        [TestMethod]
+        public void Test5QueryString()
+        {
+            Test5DeleteIndex();
+
+            Test5CreateIndex();
+
+            Test5Index();
+
+            var _client = _testNest.CreateElasticClient(_nodes);
+            //立马刷新数据 否则有默认1s延迟，无法查询出来
+            _client.Refresh(IndexName);
+
+            var countResult = _client.Count<TestModel5>(s => s.Index(IndexName));
+
+            Console.WriteLine(countResult.Count);
+
+            var result = _client.Search<TestModel5>(s => s
+                    .Index(IndexName)
+                           .Query(q => q
+                               .Bool(b => b
+                                   .Must(m => m
+                                       .Wildcard(qs=>qs.Field(fd=>fd.DicKeyword).Value("*油菜花*"))//Wildcard 要用keyword类型
+                                    )
+                               )
+                           )
+                           .FielddataFields(fdf => fdf.Fields(fd => fd.DicKeyword, fd => fd.Name))//查看实际内容
+                           .Size(10)
+                   );
+
+            Assert.AreEqual(1,result.Hits.Count);
+
+
+            var result1 = _client.Search<TestModel5>(s => s
+                   .Index(IndexName)
+                          .Query(q => q
+                              .Bool(b => b
+                                  .Must(m => m
+                                      .Wildcard(qs => qs.Field(fd => fd.DicKeyword).Value("*蔬菜*"))//Wildcard 要用keyword类型
+                                   )
+                              )
+                          )
+                          .FielddataFields(fdf => fdf.Fields(fd => fd.DicKeyword, fd => fd.Name))//查看实际内容
+                          .Size(10)
+                  );
+
+            Assert.AreEqual(2, result1.Hits.Count);
+
+          
+        }
+         /// <summary>
         /// 
         /// </summary>
         [TestMethod]
         public void Test5DeleteByQuery()
         {
-            Thread.Sleep(2000);
             _testNest.DeleteByQuery(IndexName);
         }
+        #region TestCleanup
+        /// <summary>
+        /// 
+        /// </summary>
+        [TestCleanup]
+        public void Test5DeleteIndex()
+        {
+            _testNest.DeleteIndex(IndexName);
+        }
+
+        #endregion
     }
 }
