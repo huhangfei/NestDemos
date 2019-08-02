@@ -4,28 +4,23 @@ using System.Configuration;
 using Elasticsearch.Net;
 using Nest;
 
-namespace EsData.Utils
+namespace Nest7Demo
 {
     /// <summary>
     /// eshelper
     /// </summary>
     public class EsHelper
     {
-        private static Dictionary<string, IElasticClient> clients=new Dictionary<string, IElasticClient>();
+        private static Dictionary<string, IElasticClient> clients = new Dictionary<string, IElasticClient>();
         private static object myLock = new object();
-        private static string defaultNodesConfigKey = "Nodes";
-
-
+        private const string defaultNodesConfigKey = "Nodes";
         /// <summary>
         /// 根据配置得到集合
         /// </summary>
         /// <returns></returns>
-        private static List<Uri> GetAllNodes(string nodesConfigKey= null)
+        private static List<Uri> GetAllNodes(string nodesConfigKey)
         {
-            nodesConfigKey = nodesConfigKey == null ? defaultNodesConfigKey : nodesConfigKey;
-
             string nodes = ConfigurationManager.AppSettings[nodesConfigKey] == null ? string.Empty : ConfigurationManager.AppSettings[nodesConfigKey].Trim();
-            
             return NodesParse(nodes);
         }
         /// <summary>
@@ -54,21 +49,16 @@ namespace EsData.Utils
         /// <param name="indexName"></param>
         /// <param name="timeout"></param>
         /// <returns></returns>
-        private static IElasticClient CreateElasticClient(List<Uri> nodes,string indexName, int timeout)
+        private static IElasticClient CreateElasticClient(List<Uri> nodes, string indexName, int timeout)
         {
+            if (nodes == null || nodes.Count == 0)
+                throw new Exception("未配置ES节点!(Nodes)");
             //var node = new Uri("http://192.168.87.13:9200");
             //var node = new Uri("http://localhost:9200");
             //基本设置
             //var settings = new ConnectionSettings(node).DefaultIndex(_indexName);
             //指定某种类型对应某个索引
             //var settings = new ConnectionSettings(node).MapDefaultTypeIndices(m => m.Add(typeof(MyClass),"test-2").Add(typeof(VendorPriceInfo),"test-3"));
-
-            //节点
-            if(nodes==null)
-                nodes = GetAllNodes();
-
-            if (nodes == null || nodes.Count == 0)
-                throw new Exception("未配置ES节点!(Nodes)");
 
             //链接池
             //对单节点请求
@@ -109,35 +99,37 @@ namespace EsData.Utils
         /// <summary>
         /// 获取 es client
         /// </summary>
-        /// <param name="nodes"></param>
-        /// <param name="indexName"></param>
+        /// <param name="nodesConfigKey">nodes配置 所在appSettings项的key</param>
+        /// <param name="indexName">默认的索引名</param>
         /// <param name="timeout">请求超时时间（毫秒）</param>
-        /// <param name="single"></param>
+        /// <param name="single">是否创建单例对象</param>
         /// <returns></returns>
-        public static IElasticClient CreateElasticClient(
-            string nodesConfigKey = null,
-            string indexName = "",
-            int timeout = 3000,
-            bool single=true)
+        public static IElasticClient CreateElasticClient(string nodesConfigKey = null, string indexName = "", int timeout = 3000, bool single = true)
         {
+            //配置key缺省时，使用默认key值
+            nodesConfigKey = string.IsNullOrEmpty(nodesConfigKey) ? defaultNodesConfigKey : nodesConfigKey;
+
             if (!single)
                 return CreateElasticClient(nodesConfigKey, indexName, timeout);
 
-            if (clients.ContainsKey(nodesConfigKey))
-            {
-                return clients[nodesConfigKey];
-            }
+            string connectionKey = nodesConfigKey + ":" + indexName;
 
-            lock (myLock) {
-                if (!clients.ContainsKey(nodesConfigKey))
+            if (clients.ContainsKey(connectionKey))
+            {
+                return clients[connectionKey];
+            }
+            lock (myLock)
+            {
+                if (!clients.ContainsKey(connectionKey))
                 {
-                    lock (myLock) {
-                        clients.Add(nodesConfigKey,CreateElasticClient(nodesConfigKey, indexName, timeout));
+                    lock (myLock)
+                    {
+                        clients.Add(connectionKey, CreateElasticClient(nodesConfigKey, indexName, timeout));
+                        
                     }
                 }
             }
-            return clients[nodesConfigKey];
+            return clients[connectionKey];
         }
-       
     }
 }
