@@ -4,7 +4,7 @@
 Elasticsearch .net client NEST 各方法的使用示例。
 
 #### 版本
-2.x 和 5.x
+7.x
 
 #### 相关总结
 
