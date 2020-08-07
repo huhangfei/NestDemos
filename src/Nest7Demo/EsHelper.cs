@@ -13,15 +13,64 @@ namespace Nest7Demo
     {
         private static Dictionary<string, IElasticClient> clients = new Dictionary<string, IElasticClient>();
         private static object myLock = new object();
-        private const string defaultNodesConfigKey = "Nodes";
+        private const string defaultNodesConfigKey = "EsConnectionString";
+        Dictionary<string, string> connectionConfigs = new Dictionary<string, string>();
         /// <summary>
         /// 根据配置得到集合
         /// </summary>
         /// <returns></returns>
         private static List<Uri> GetAllNodes(string nodesConfigKey)
         {
-            string nodes = ConfigurationManager.AppSettings[nodesConfigKey] == null ? string.Empty : ConfigurationManager.AppSettings[nodesConfigKey].Trim();
-            return NodesParse(nodes);
+            Dictionary<string, string> keyValues = GetConnectionConfigs(nodesConfigKey);
+            if (keyValues.ContainsKey("hosts"))
+            {
+                return NodesParse(keyValues["hosts"]);
+            }
+            return null;
+        }
+        private static string GetUserName(string nodesConfigKey)
+        {
+            Dictionary<string, string> keyValues = GetConnectionConfigs(nodesConfigKey);
+            if (keyValues.ContainsKey("user"))
+            {
+                return keyValues["user"];
+            }
+            return null;
+        }
+        private static string GetPassword(string nodesConfigKey)
+        {
+            Dictionary<string, string> keyValues = GetConnectionConfigs(nodesConfigKey);
+            if (keyValues.ContainsKey("password"))
+            {
+                return keyValues["password"];
+            }
+            return null;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="nodesConfigKey"></param>
+        /// <returns></returns>
+        private static Dictionary<string, string> GetConnectionConfigs(string nodesConfigKey)
+        {
+            string connectionString = ConfigurationManager.AppSettings[nodesConfigKey] == null ? string.Empty : ConfigurationManager.AppSettings[nodesConfigKey].Trim();
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                throw new Exception($"未找到es配置{nodesConfigKey}");
+            }
+            string[] connectionConfigArr = connectionString.Split(';');
+            Dictionary<string, string> keyValues = new Dictionary<string, string>(connectionConfigArr.Length);
+
+            for (int i = 0; i < connectionConfigArr.Length; i++)
+            {
+                if (!string.IsNullOrEmpty(connectionConfigArr[i]))
+                {
+                    string[] kv = connectionConfigArr[i].Split('=');
+                    keyValues.Add(kv[0], kv[1]);
+                }
+            }
+
+            return keyValues;
         }
         /// <summary>
         /// 解析nodes
@@ -49,7 +98,7 @@ namespace Nest7Demo
         /// <param name="indexName"></param>
         /// <param name="timeout"></param>
         /// <returns></returns>
-        private static IElasticClient CreateElasticClient(List<Uri> nodes, string indexName, int timeout)
+        private static IElasticClient CreateElasticClient(List<Uri> nodes, string indexName, int timeout,string user=null,string password = null)
         {
             if (nodes == null || nodes.Count == 0)
                 throw new Exception("未配置ES节点!(Nodes)");
@@ -78,9 +127,16 @@ namespace Nest7Demo
             if (!string.IsNullOrEmpty(indexName))
                 settings.DefaultIndex(indexName);
             settings.RequestTimeout(new TimeSpan(timeout * 10000));
-            //settings.DisableDirectStreaming();
+            settings.DisableDirectStreaming();
             settings.DefaultFieldNameInferrer(name => name);
-            settings.ThrowExceptions();
+            //settings.ThrowExceptions();
+
+
+            if (!string.IsNullOrEmpty(user) && !string.IsNullOrEmpty(password))
+            {
+                settings.BasicAuthentication(user, password);
+            }
+
             return new ElasticClient(settings);
 
 
@@ -94,7 +150,10 @@ namespace Nest7Demo
         /// <returns></returns>
         private static IElasticClient CreateElasticClient(string nodesConfigKey, string indexName, int timeout)
         {
-            return CreateElasticClient(GetAllNodes(nodesConfigKey), indexName, timeout);
+            string user = GetUserName(nodesConfigKey);
+            string password = GetPassword(nodesConfigKey);
+            List<Uri> nodes = GetAllNodes(nodesConfigKey);
+            return CreateElasticClient(nodes, indexName, timeout, user,password);
         }
         /// <summary>
         /// 获取 es client
